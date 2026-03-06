@@ -1,0 +1,34 @@
+name: flutter_webview_plugin
+description: Plugin that allow Flutter to communicate with a native Webview.
+authors:
+  - Hadrien Lejard <hadrien.lejard@gmail.com>
+  - Toufik Zitouni <toufiksapps@gmail.com>
+  - Pedia <kpedia@163.com>
+  - Simon Lightfoot <simon@devangels.london>
+  - Rafal Wachol <gorudonu@gmail.com>
+  - Misir Jafarov <misir@fonibo.com>
+homepage: https://github.com/dart-flitter/flutter_webview_plugin
+version: 0.4.0
+
+
+environment:
+  sdk: ">=2.17.0 <=4.0.0"
+  flutter: ">=3.7.0"
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.flutter_webview_plugin
+        pluginClass: FlutterWebviewPlugin
+      ios:
+        pluginClass: FlutterWebviewPlugin
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  mocktail: ^0.1.1
+  flutter_test:
+    sdk: flutter
