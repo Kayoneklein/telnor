@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer' as dev;
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
@@ -31,7 +32,7 @@ class WebProvider {
   late final Future<void> initialization;
 
   static const DEFAULT_SERVER =
-      'https://gestorcontrasenastelmex.pandasecurity.com';
+      'https://gestorcontrasenastelnor.pandasecurity.com';
 
   String _currentServer = '';
 
@@ -1086,19 +1087,24 @@ class WebProvider {
       final conf = await _readOnlyService.getRemoteConfig();
       return WebResult.success(conf!);
     } else {
-      final config = await _genericWebRequest(
-        'getsystemconfig',
-        null,
-        '{}',
-        resultTransformer: (dynamic result) =>
-            RemoteConfiguration.fromJson(result),
-        enforceDefaultDomain: true,
-      );
-      if (config.data != null) {
-        await _readOnlyService.addRemoteConfig(config.data!);
-      }
+      try {
+        final config = await _genericWebRequest(
+          'getsystemconfig',
+          null,
+          '{}',
+          resultTransformer: (dynamic result) =>
+              RemoteConfiguration.fromJson(result),
+          enforceDefaultDomain: true,
+        );
+        if (config.data != null) {
+          await _readOnlyService.addRemoteConfig(config.data!);
+        }
 
-      return config;
+        return config;
+      } catch (err) {
+        dev.log("Error getting remote config: $err");
+        return WebResult.error(0, "$err");
+      }
     }
   }
 }

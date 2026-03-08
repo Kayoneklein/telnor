@@ -1,6 +1,8 @@
 part of '../index.dart';
 
 class SettingScreen extends StatelessWidget {
+  const SettingScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final themeData = Theme.of(context);
@@ -9,7 +11,7 @@ class SettingScreen extends StatelessWidget {
       color: primaryColor,
     );
 
-    Widget _tile({
+    Widget tile({
       required String text,
       required IconData icon,
       required VoidCallback onTap,
@@ -22,9 +24,9 @@ class SettingScreen extends StatelessWidget {
     }
 
     final tiles = <Widget>[
-      _tile(
+      tile(
         text: Strings.settingsChooseLanguage,
-        icon: FontAwesomeIcons.language,
+        icon: FontAwesomeIcons.globe,
         onTap: () {
           Navigator.push(
             context,
@@ -35,7 +37,7 @@ class SettingScreen extends StatelessWidget {
         },
       ),
       const Divider(),
-      _tile(
+      tile(
         text: Strings.settingsAutoFillSetting,
         icon: FontAwesomeIcons.lock,
         onTap: () async {
@@ -86,15 +88,6 @@ class SettingScreen extends StatelessWidget {
               },
             ),
           ),
-          //!!!            actions: state.isInitialized
-          //                ? [
-          //                    IconButton(
-          //                      icon: Icon(Icons.check),
-          //                      tooltip: Strings.actionConfirm,
-          //                      onPressed: _confirmButtonPressed,
-          //                    ),
-          //                  ]
-          //                : [],
         ),
         body: ListView(children: tiles),
       ),

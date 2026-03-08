@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:telnor/constants/colors.dart';
 import 'package:telnor/messages/bloc/messages_bloc.dart';
 import 'package:telnor/messages/bloc/messages_event.dart';
 import 'package:telnor/messages/bloc/messages_state.dart';
@@ -145,18 +146,8 @@ class _MessagesAppBarState extends State<MessagesAppBar> {
             isExpanded: false,
             style: Theme.of(context).primaryTextTheme.bodyMedium,
             selectedItemBuilder: (context) => [
-              Center(
-                child: Text(
-                  Strings.messagesInbox,
-                  style: Theme.of(context).primaryTextTheme.headlineSmall,
-                ),
-              ),
-              Center(
-                child: Text(
-                  Strings.messagesOutbox,
-                  style: Theme.of(context).primaryTextTheme.headlineSmall,
-                ),
-              ),
+              Center(child: Text(Strings.messagesInbox)),
+              Center(child: Text(Strings.messagesOutbox)),
             ],
             icon: Padding(
               padding: const EdgeInsets.only(top: 4.0),

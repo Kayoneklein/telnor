@@ -6,8 +6,6 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final remoteConfig =
-    //     BlocProvider.of<ConfigurationBloc>(context).state.configuration;
     return Scaffold(
       backgroundColor: Theme.of(context).primaryColor,
       body: Padding(
@@ -23,7 +21,7 @@ class SplashScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(20),
                     image: const DecorationImage(
-                      image: AssetImage(PImages.logoWhite),
+                      image: AssetImage(PImages.logo),
                     ),
                   ),
                 ),
@@ -31,23 +29,27 @@ class SplashScreen extends StatelessWidget {
                 Expanded(
                   child: Column(
                     children: <Widget>[
-                      const Align(
+                      Align(
                         alignment: Alignment.centerLeft,
-                        child: AutoSizeText(
-                          // remoteConfig.productName.isNotEmpty
-                          //     ? remoteConfig.productName
-                          //     : appName,
-                          appName,
-                          maxLines: 2,
-                          maxFontSize: 28,
-                          textAlign: TextAlign.left,
-                          style: TextStyle(
-                            color: Colors.white,
-                            inherit: false,
-                            fontSize: 28.0,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
+                        child:
+                            BlocBuilder<ConfigurationBloc, ConfigurationState>(
+                              builder: (_, state) {
+                                return AutoSizeText(
+                                  state.configuration.productName.isNotEmpty
+                                      ? state.configuration.productName
+                                      : appName,
+                                  maxLines: 2,
+                                  maxFontSize: 28,
+                                  textAlign: TextAlign.left,
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    inherit: false,
+                                    fontSize: 28.0,
+                                    fontWeight: FontWeight.w800,
+                                  ),
+                                );
+                              },
+                            ),
                       ),
                       const SizedBox(height: 8.0),
                       SizedBox(

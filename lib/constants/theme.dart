@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:telnor/constants/colors.dart';
 
@@ -32,8 +33,8 @@ ThemeData buildThemeData(BuildContext context) {
   final textTheme = Theme.of(context).textTheme;
 
   return ThemeData(
-    primarySwatch: createMaterialColor(PColors.blue),
-    primaryColor: PColors.blue,
+    primarySwatch: createMaterialColor(PColors.green),
+    primaryColor: PColors.green,
     textTheme: GoogleFonts.robotoTextTheme(textTheme).copyWith(
       bodySmall: const TextStyle(fontSize: 13.0),
       bodyMedium: const TextStyle(fontSize: 16.0),
@@ -50,18 +51,27 @@ ThemeData buildThemeData(BuildContext context) {
       bodyLarge: TextStyle(fontSize: 16.0),
     ),
     appBarTheme: const AppBarTheme(
-      backgroundColor: PColors.blue,
+      backgroundColor: PColors.green,
+      systemOverlayStyle: SystemUiOverlayStyle(
+        statusBarIconBrightness: Brightness.light,
+        systemNavigationBarColor: PColors.white,
+        systemNavigationBarIconBrightness: Brightness.dark, //Android
+        statusBarBrightness: Brightness.light, //iOS
+        statusBarColor: PColors.darkBlue, //Android only
+        systemStatusBarContrastEnforced: true,
+        // systemNavigationBarContrastEnforced: true,
+      ),
       //brightness: Brightness.dark,
     ),
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      selectedItemColor: PColors.blue,
+      selectedItemColor: PColors.green,
     ),
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
-      backgroundColor: PColors.blue,
+      backgroundColor: PColors.green,
     ),
     useMaterial3: false,
-    tabBarTheme: const TabBarThemeData(indicatorColor: PColors.blue),
-    primaryColorLight: PColors.blue,
+    tabBarTheme: const TabBarThemeData(indicatorColor: PColors.green),
+    primaryColorLight: PColors.green,
     chipTheme: const ChipThemeData(
       brightness: Brightness.light,
       padding: EdgeInsets.only(left: 12.0, right: 12.0, top: 4.0, bottom: 4.0),
@@ -69,17 +79,29 @@ ThemeData buildThemeData(BuildContext context) {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(20)),
         side: BorderSide(
-          color: PColors.blue,
+          color: PColors.green,
           width: 2.0,
           style: BorderStyle.solid,
         ),
       ),
       backgroundColor: Colors.transparent,
-      labelStyle: TextStyle(fontSize: 14.0, color: PColors.blue),
-      selectedColor: PColors.blue,
+      labelStyle: TextStyle(fontSize: 14.0, color: PColors.green),
+      selectedColor: PColors.green,
       secondaryLabelStyle: TextStyle(fontSize: 14.0, color: Colors.black),
       disabledColor: Colors.grey,
-      secondarySelectedColor: PColors.blue,
+      secondarySelectedColor: PColors.green,
+    ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        side: BorderSide(color: PColors.green),
+        textStyle: TextStyle(color: PColors.green),
+      ),
+    ),
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: PColors.green,
+        textStyle: TextStyle(color: PColors.white),
+      ),
     ),
   );
 }

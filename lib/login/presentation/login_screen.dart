@@ -11,6 +11,7 @@ class LoginScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(Strings.loginTitle),
         automaticallyImplyLeading: false,
+
         actions: <Widget>[
           IconButton(
             icon: const Icon(FontAwesomeIcons.circleQuestion),

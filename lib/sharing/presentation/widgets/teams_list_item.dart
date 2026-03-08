@@ -3,10 +3,14 @@ import 'package:telnor/model/team.dart';
 
 /// Widget to display one team line
 class TeamsListItem extends StatelessWidget {
-  const TeamsListItem({required Team team, Function()? onTap, bool? isChecked})
-    : _team = team,
-      _onTap = onTap,
-      _isChecked = isChecked ?? false;
+  const TeamsListItem({
+    super.key,
+    required Team team,
+    Function()? onTap,
+    bool? isChecked,
+  }) : _team = team,
+       _onTap = onTap,
+       _isChecked = isChecked ?? false;
 
   final Team _team;
   final Function()? _onTap;
@@ -32,20 +36,22 @@ class TeamsListItem extends StatelessWidget {
               backgroundColor: _isChecked
                   ? Theme.of(context).colorScheme.secondary
                   : Colors.grey[300],
+              backgroundImage: null,
               child: _isChecked
                   ? Icon(
                       Icons.done,
                       color: Theme.of(context).colorScheme.onSecondary,
                     )
                   : Icon(Icons.people, color: Colors.grey[500]),
-              backgroundImage: null,
             ),
             const SizedBox(width: 16.0),
-            Text(
-              _team.name,
-              style: Theme.of(context).textTheme.bodyMedium,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            Expanded(
+              child: Text(
+                _team.name,
+                style: Theme.of(context).textTheme.bodyMedium,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ],
         ),

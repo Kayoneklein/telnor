@@ -8,7 +8,6 @@ class GuideScreen extends StatefulWidget {
     MapEntry(Strings.tourGuideTitle1, Strings.tourGuideMessage1),
     MapEntry(Strings.tourGuideTitle2, Strings.tourGuideMessage2),
     MapEntry(Strings.tourGuideTitle3, Strings.tourGuideMessage3),
-    // MapEntry(Strings.tourGuideTitle6, Strings.tourGuideMessage6),
   ];
 
   GuideScreen({super.key});
@@ -28,9 +27,6 @@ class _GuideScreenState extends State<GuideScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final remoteConfig = BlocProvider.of<ConfigurationBloc>(
-      context,
-    ).state.configuration;
     final theme = Theme.of(context);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -43,7 +39,11 @@ class _GuideScreenState extends State<GuideScreen> {
       ),
       child: Scaffold(
         extendBodyBehindAppBar: true,
-        appBar: AppBar(toolbarHeight: 0, elevation: 0),
+        appBar: AppBar(
+          toolbarHeight: 0,
+          elevation: 0,
+          backgroundColor: PColors.darkBlue,
+        ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
@@ -52,7 +52,7 @@ class _GuideScreenState extends State<GuideScreen> {
               child: SizedBox(
                 width: 180,
                 height: 180,
-                child: Image.asset(PImages.logo),
+                child: Image.asset(PImages.logoGuide),
               ),
             ),
             Expanded(
@@ -66,14 +66,18 @@ class _GuideScreenState extends State<GuideScreen> {
                     setState(() {});
                   },
                   children: widget._guidePages.map((page) {
-                    return GuidePage(
-                      title: page.key,
-                      message: page.value.contains('[productname]')
-                          ? page.value.replaceAll(
-                              '[productname]',
-                              remoteConfig.productName,
-                            )
-                          : page.value,
+                    return BlocBuilder<ConfigurationBloc, ConfigurationState>(
+                      builder: (_, state) {
+                        return GuidePage(
+                          title: page.key,
+                          message: page.value.contains('[productname]')
+                              ? page.value.replaceAll(
+                                  '[productname]',
+                                  state.configuration.productName,
+                                )
+                              : page.value,
+                        );
+                      },
                     );
                   }).toList(),
                 ),

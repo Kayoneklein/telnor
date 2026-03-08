@@ -6,6 +6,7 @@ import 'package:telnor/authentication/bloc/authentication_bloc.dart';
 import 'package:telnor/authentication/bloc/authentication_event.dart';
 import 'package:telnor/config/configuration_bloc.dart';
 import 'package:telnor/config/configuration_event.dart';
+import 'package:telnor/constants/colors.dart';
 import 'package:telnor/constants/preferences.dart';
 import 'package:telnor/login/bloc/login_bloc.dart';
 import 'package:telnor/login/bloc/login_event.dart';

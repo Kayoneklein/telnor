@@ -2,6 +2,8 @@ part of '../index.dart';
 
 ///Screen for showing user info
 class UserInfoScreen extends StatelessWidget {
+  const UserInfoScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider<UserInfoBloc>(
@@ -14,6 +16,8 @@ class UserInfoScreen extends StatelessWidget {
 //======================================================================================================================
 
 class UserInfoForm extends StatefulWidget {
+  const UserInfoForm({super.key});
+
   @override
   State createState() => _UserInfoFormState();
 }
@@ -137,12 +141,12 @@ class _UserInfoFormState extends State<UserInfoForm> {
                                 Material(
                                   color: Colors.transparent,
                                   child: InkWell(
+                                    borderRadius: BorderRadius.circular(75.0),
+                                    onTap: _onAvatarPressed,
                                     child: const SizedBox(
                                       width: 150.0,
                                       height: 150.0,
                                     ),
-                                    borderRadius: BorderRadius.circular(75.0),
-                                    onTap: _onAvatarPressed,
                                   ),
                                 ),
                               ],
@@ -150,37 +154,33 @@ class _UserInfoFormState extends State<UserInfoForm> {
                             const SizedBox(height: 16.0),
                             ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: PColors.blue,
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 8,
-                                  horizontal: 30,
+                                  horizontal: 31,
                                 ),
                                 // fixedSize: const Size(150, 30),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
                                 ),
+                                textStyle: TextStyle(
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                               onPressed: _onDeleteAvatarPressed,
-                              child: Text(
-                                Strings.userInfoDeleteAvatar,
-                                style: Theme.of(context).textTheme.bodyMedium
-                                    ?.copyWith(
-                                      color: PColors.white,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                              ),
+                              child: Text(Strings.userInfoDeleteAvatar),
                             ),
                             const SizedBox(height: 30.0),
                             OutlinedButton(
                               style: OutlinedButton.styleFrom(
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 8,
-                                  horizontal: 20,
+                                  horizontal: 24,
                                 ),
-                                side: BorderSide(color: PColors.blue),
-                                // fixedSize: const Size(150, 30),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10),
+                                ),
+                                textStyle: TextStyle(
+                                  fontWeight: FontWeight.w700,
                                 ),
                               ),
                               onPressed: () {
@@ -191,15 +191,7 @@ class _UserInfoFormState extends State<UserInfoForm> {
                                   ),
                                 );
                               },
-                              child: Text(
-                                Strings.deleteAccountRemoveAccount,
-                                style: Theme.of(context).textTheme.bodyMedium
-                                    ?.copyWith(
-                                      color: PColors.blue,
-                                      fontWeight: FontWeight.w700,
-                                      // decoration: TextDecoration.underline,
-                                    ),
-                              ),
+                              child: Text(Strings.deleteAccountRemoveAccount),
                             ),
                           ],
                         ),
@@ -221,7 +213,7 @@ class _UserInfoFormState extends State<UserInfoForm> {
     UserInfoState state,
   ) async {
     if (state is ShowDiscardDialogState) {
-      final bool? isYes =
+      final bool isYes =
           await showDialog<bool?>(
             context: context,
             builder: (BuildContext dialogContext) {
@@ -245,7 +237,7 @@ class _UserInfoFormState extends State<UserInfoForm> {
             },
           ) ??
           false;
-      _bloc.add(DialogConfirmationReceived(isYes: isYes ?? false));
+      _bloc.add(DialogConfirmationReceived(isYes: isYes));
     }
     if (state is UserInfoSavedState) {
       if (state.isSuccess) {

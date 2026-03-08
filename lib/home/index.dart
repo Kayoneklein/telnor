@@ -10,6 +10,7 @@ import 'package:telnor/authentication/bloc/authentication_event.dart';
 import 'package:telnor/authentication/bloc/authentication_state.dart' as auth;
 import 'package:telnor/authentication/bloc/authentication_state.dart';
 import 'package:telnor/config/configuration_bloc.dart';
+import 'package:telnor/config/configuration_state.dart';
 import 'package:telnor/constants/assets.dart';
 import 'package:telnor/constants/colors.dart';
 import 'package:telnor/constants/global_variables.dart';

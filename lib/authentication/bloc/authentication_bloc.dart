@@ -39,8 +39,8 @@ class AuthenticationBloc
             if (await _isFirstRun()) {
               emit(StartupGuide());
             } else {
-              emit(StartupGuide());
-              // emit(Unauthenticated());
+              // emit(StartupGuide());
+              emit(Unauthenticated());
             }
           }
         }

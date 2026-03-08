@@ -2,7 +2,11 @@ part of '../../index.dart';
 
 /// Screen for viewing locations on map
 class LocationViewerScreen extends StatefulWidget {
-  const LocationViewerScreen({required this.title, required this.locations});
+  const LocationViewerScreen({
+    super.key,
+    required this.title,
+    required this.locations,
+  });
 
   final String title;
   final List<Location> locations;

@@ -5,6 +5,7 @@ import 'package:telnor/sharing/presentation/widgets/teams_list_item.dart';
 ///Widget to display list of teams
 class TeamsList extends StatelessWidget {
   const TeamsList({
+    super.key,
     required List<Team> teams,
     Function(int, Team)? onItemClicked,
     Set<int>? selectedIds,

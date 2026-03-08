@@ -5,6 +5,8 @@ import 'package:privacy_screen/privacy_screen.dart';
 import 'package:telnor/authentication/bloc/authentication_bloc.dart';
 import 'package:telnor/authentication/bloc/authentication_event.dart';
 import 'package:telnor/authentication/bloc/authentication_state.dart';
+import 'package:telnor/config/configuration_bloc.dart';
+import 'package:telnor/config/configuration_state.dart';
 import 'package:telnor/constants/global_variables.dart';
 import 'package:telnor/constants/routes.dart';
 import 'package:telnor/constants/theme.dart';
@@ -38,133 +40,141 @@ class _PCryptAppState extends State<PCryptApp> with WidgetsBindingObserver {
     ]);
     return LifeCycleManager(
       onStateChanged: (state) => _onStateChanged(context, state),
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        title: appName,
-        theme: buildThemeData(context),
-        builder: (_, child) {
-          return PrivacyGate(child: child);
-        },
-        home: BlocListener<AuthenticationBloc, AuthenticationState>(
-          listener: (context, state) async {
-            if (state is ShowUnverifiedEmailDialog) {
-              showDialog<void>(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text(Strings.unverifiedEmailTitle),
-                    content: Text(Strings.unverifiedEmailMessage),
-                    actions: [
-                      TextButton(
-                        child: Text(Strings.actionOk.toUpperCase()),
-                        onPressed: () {
-                          Navigator.of(context).pop(false);
-                        },
-                      ),
-                    ],
+      child: BlocBuilder<ConfigurationBloc, ConfigurationState>(
+        builder: (_, state) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: state.configuration.productName.isNotEmpty
+                ? state.configuration.productName
+                : appName,
+            theme: buildThemeData(context),
+            builder: (_, child) {
+              return PrivacyGate(child: child);
+            },
+            home: BlocListener<AuthenticationBloc, AuthenticationState>(
+              listener: (context, state) async {
+                if (state is ShowUnverifiedEmailDialog) {
+                  showDialog<void>(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: Text(Strings.unverifiedEmailTitle),
+                        content: Text(Strings.unverifiedEmailMessage),
+                        actions: [
+                          TextButton(
+                            child: Text(Strings.actionOk.toUpperCase()),
+                            onPressed: () {
+                              Navigator.of(context).pop(false);
+                            },
+                          ),
+                        ],
+                      );
+                    },
                   );
-                },
-              );
-            } else if (state is ShowAuthenticationDialog) {
-              BlocProvider.of<AuthenticationBloc>(
-                context,
-              ).add(SignedOutEvent());
-              _showDialogForLoggedOut(context);
-            }
-            if (state is SessionExpired) {
-              await showDialog<void>(
-                context: context,
-                builder: (context) {
-                  return PopScope(
-                    canPop: false,
-                    onPopInvokedWithResult: (bool? pop, result) {},
-                    child: AlertDialog(
-                      title: Text(Strings.sessionExpiredTitle),
-                      content: Text(Strings.sessionExpiredMessage),
-                      actions: <Widget>[
-                        TextButton(
-                          child: Text(Strings.actionOk.toUpperCase()),
-                          onPressed: () => Navigator.of(context).pop(),
+                } else if (state is ShowAuthenticationDialog) {
+                  BlocProvider.of<AuthenticationBloc>(
+                    context,
+                  ).add(SignedOutEvent());
+                  _showDialogForLoggedOut(context);
+                }
+                if (state is SessionExpired) {
+                  await showDialog<void>(
+                    context: context,
+                    builder: (context) {
+                      return PopScope(
+                        canPop: false,
+                        onPopInvokedWithResult: (bool? pop, result) {},
+                        child: AlertDialog(
+                          title: Text(Strings.sessionExpiredTitle),
+                          content: Text(Strings.sessionExpiredMessage),
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text(Strings.actionOk.toUpperCase()),
+                              onPressed: () => Navigator.of(context).pop(),
+                            ),
+                          ],
                         ),
-                      ],
+                      );
+                    },
+                  );
+                  Navigator.of(
+                    context,
+                  ).popUntil(ModalRoute.withName(Routes.home));
+                  BlocProvider.of<AuthenticationBloc>(
+                    context,
+                  ).add(SignedOutEvent());
+                } else if (state is BiometricLock) {
+                  Overlay.of(context).insert(biometricsOverlay);
+                  await Future<void>.delayed(const Duration(milliseconds: 100));
+                  final authorized = await BiometricsService.get.authorize();
+                  biometricsOverlay.remove();
+                  BlocProvider.of<AuthenticationBloc>(
+                    context,
+                  ).add(BiometricInputEvent(authorized: authorized));
+                }
+              },
+              child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+                builder: (context, state) {
+                  Widget widget;
+                  SystemUiOverlayStyle overlayStyle;
+                  if (state is Uninitialized) {
+                    widget = SplashScreen();
+                    overlayStyle = SystemUiOverlayStyle.dark.copyWith(
+                      systemNavigationBarColor: Theme.of(context).primaryColor,
+                      systemNavigationBarIconBrightness: Brightness.light,
+                      statusBarIconBrightness: Brightness.light,
+                    );
+                  } else if (state is StartupGuide) {
+                    widget = GuideScreen();
+                    overlayStyle = SystemUiOverlayStyle.dark.copyWith(
+                      systemNavigationBarColor: Colors.blue[900],
+                      systemNavigationBarIconBrightness: Brightness.light,
+                      statusBarIconBrightness: Brightness.light,
+                    );
+                  } else if (state is Authenticated ||
+                      state is ShowPremiumFeaturesDialog ||
+                      state is ShowUnverifiedEmailDialog ||
+                      state is BiometricLock ||
+                      state is SessionExpired) {
+                    overlayStyle = SystemUiOverlayStyle.dark.copyWith(
+                      systemNavigationBarColor: Theme.of(context).primaryColor,
+                      systemNavigationBarIconBrightness: Brightness.light,
+                      statusBarIconBrightness: Brightness.light,
+                    );
+                    widget = HomeScreen();
+                    overlayStyle = SystemUiOverlayStyle.light.copyWith(
+                      systemNavigationBarColor: Colors.grey[50],
+                      systemNavigationBarIconBrightness: Brightness.dark,
+                      statusBarIconBrightness: Brightness.dark,
+                    );
+                  } else if (state is SigningUp) {
+                    widget = SignUpScreen();
+                    overlayStyle = SystemUiOverlayStyle.light.copyWith(
+                      systemNavigationBarColor: Colors.white,
+                      systemNavigationBarIconBrightness: Brightness.dark,
+                      statusBarIconBrightness: Brightness.dark,
+                    );
+                  } else {
+                    widget = LoginScreen();
+                    _showDialogForLoggedOut(context);
+                    overlayStyle = SystemUiOverlayStyle.light.copyWith(
+                      systemNavigationBarColor: Colors.white,
+                      systemNavigationBarIconBrightness: Brightness.dark,
+                      statusBarIconBrightness: Brightness.dark,
+                    );
+                  }
+                  return AnnotatedRegion<SystemUiOverlayStyle>(
+                    value: overlayStyle,
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 500),
+                      child: widget,
                     ),
                   );
                 },
-              );
-              Navigator.of(context).popUntil(ModalRoute.withName(Routes.home));
-              BlocProvider.of<AuthenticationBloc>(
-                context,
-              ).add(SignedOutEvent());
-            } else if (state is BiometricLock) {
-              Overlay.of(context).insert(biometricsOverlay);
-              await Future<void>.delayed(const Duration(milliseconds: 100));
-              final authorized = await BiometricsService.get.authorize();
-              biometricsOverlay.remove();
-              BlocProvider.of<AuthenticationBloc>(
-                context,
-              ).add(BiometricInputEvent(authorized: authorized));
-            }
-          },
-          child: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-            builder: (context, state) {
-              Widget widget;
-              SystemUiOverlayStyle overlayStyle;
-              if (state is Uninitialized) {
-                widget = SplashScreen();
-                overlayStyle = SystemUiOverlayStyle.dark.copyWith(
-                  systemNavigationBarColor: Theme.of(context).primaryColor,
-                  systemNavigationBarIconBrightness: Brightness.light,
-                  statusBarIconBrightness: Brightness.light,
-                );
-              } else if (state is StartupGuide) {
-                widget = GuideScreen();
-                overlayStyle = SystemUiOverlayStyle.dark.copyWith(
-                  systemNavigationBarColor: Colors.blue[900],
-                  systemNavigationBarIconBrightness: Brightness.light,
-                  statusBarIconBrightness: Brightness.light,
-                );
-              } else if (state is Authenticated ||
-                  state is ShowPremiumFeaturesDialog ||
-                  state is ShowUnverifiedEmailDialog ||
-                  state is BiometricLock ||
-                  state is SessionExpired) {
-                overlayStyle = SystemUiOverlayStyle.dark.copyWith(
-                  systemNavigationBarColor: Theme.of(context).primaryColor,
-                  systemNavigationBarIconBrightness: Brightness.light,
-                  statusBarIconBrightness: Brightness.light,
-                );
-                widget = HomeScreen();
-                overlayStyle = SystemUiOverlayStyle.light.copyWith(
-                  systemNavigationBarColor: Colors.grey[50],
-                  systemNavigationBarIconBrightness: Brightness.dark,
-                  statusBarIconBrightness: Brightness.dark,
-                );
-              } else if (state is SigningUp) {
-                widget = SignUpScreen();
-                overlayStyle = SystemUiOverlayStyle.light.copyWith(
-                  systemNavigationBarColor: Colors.white,
-                  systemNavigationBarIconBrightness: Brightness.dark,
-                  statusBarIconBrightness: Brightness.dark,
-                );
-              } else {
-                widget = LoginScreen();
-                _showDialogForLoggedOut(context);
-                overlayStyle = SystemUiOverlayStyle.light.copyWith(
-                  systemNavigationBarColor: Colors.white,
-                  systemNavigationBarIconBrightness: Brightness.dark,
-                  statusBarIconBrightness: Brightness.dark,
-                );
-              }
-              return AnnotatedRegion<SystemUiOverlayStyle>(
-                value: overlayStyle,
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 500),
-                  child: widget,
-                ),
-              );
-            },
-          ),
-        ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

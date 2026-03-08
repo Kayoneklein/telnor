@@ -3,6 +3,7 @@ part of '../../index.dart';
 /// Screen for picking list of members
 class MemberPickerScreen extends StatelessWidget {
   const MemberPickerScreen({
+    super.key,
     bool checkSharingOptions = false,
     Iterable<int>? pickedTeams,
     Iterable<TeamMemberIdPair>? pickedMembers,
@@ -152,9 +153,7 @@ class _MemberPickerContentState extends State<_MemberPickerContent> {
         return AlertDialog(
           title: Text(Strings.memberPickerEmailUnprocessedTitle),
           content: Text(
-            Strings.memberPickerEmailUnprocessedMessage +
-                '\n\n' +
-                unprocessedEmails.map((s) => '- ' + s).join('\n'),
+            '${Strings.memberPickerEmailUnprocessedMessage}\n\n${unprocessedEmails.map((s) => '- $s').join('\n')}',
           ),
           actions: [
             TextButton(

@@ -10,6 +10,7 @@ import 'package:telnor/model/pcrypt_key.dart';
 import 'package:telnor/model/share_result.dart';
 import 'package:telnor/model/team.dart';
 import 'package:telnor/util/shared_password_model.dart';
+import 'dart:developer' as dev;
 
 /// Single instance of hidden WebView which processes JavaScript requests
 /// Initializes once per application run and may be called from different places.
@@ -46,7 +47,7 @@ class JavaScripts {
         JavascriptChannel(
           name: 'Print',
           onMessageReceived: (JavascriptMessage message) {
-            print(message.message);
+            dev.log(message.message);
           },
         ),
       },
@@ -72,7 +73,6 @@ class JavaScripts {
 
   /// Helper method for unknown type decoding (varies depending on platform)
   dynamic _smartDecode(dynamic json) {
-    print('smartDecode $json');
     if (Platform.isAndroid) {
       final dynamic realJson = jsonDecode(json);
       if (realJson is String) {
